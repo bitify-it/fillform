@@ -18,6 +18,58 @@ Give it a document and a list of questions; get back structured JSON answers, ea
 - **Runs locally.** Default provider is [Ollama](https://ollama.com) — no data leaves your machine. Any OpenAI-compatible endpoint also works.
 - **Sync or async.** Small documents inline, larger ones as background jobs with progress tracking.
 
+## Demo
+
+Real, unedited output from a local run against `gemma4:12b-mlx` on Ollama. The
+document only states the legal name, VAT number and sector — nothing about a
+Data Protection Officer:
+
+```bash
+curl -X POST http://127.0.0.1:8000/api/v1/form-extraction/run \
+  -F 'file=@company.html' \
+  -F 'payload={
+    "formName": "Company Registration",
+    "fields": [
+      {"fieldId": "legal_name", "question": "What is the company legal name?", "expectedType": "string"},
+      {"fieldId": "vat_number", "question": "What is the VAT number?", "expectedType": "vat_number"},
+      {"fieldId": "dpo_appointed", "question": "Has the company appointed a Data Protection Officer?", "expectedType": "boolean"}
+    ],
+    "options": {"strictEvidence": true, "language": "en"}
+  }'
+```
+
+```json
+{
+  "status": "completed_with_gaps",
+  "answers": [
+    {
+      "fieldId": "legal_name",
+      "status": "answered",
+      "value": "Acme Robotics S.p.A.",
+      "confidence": 1.0,
+      "evidence": [{ "quote": "Legal name: Acme Robotics S.p.A." }]
+    },
+    {
+      "fieldId": "vat_number",
+      "status": "answered",
+      "value": "12345678901",
+      "confidence": 1.0,
+      "evidence": [{ "quote": "VAT number: 12345678901" }]
+    },
+    {
+      "fieldId": "dpo_appointed",
+      "status": "not_found",
+      "value": null,
+      "confidence": 0.0
+    }
+  ]
+}
+```
+
+The two facts present in the document are extracted with evidence. The DPO
+question — not mentioned anywhere — comes back `not_found` instead of a
+guessed `true`/`false`. That's the anti-hallucination guarantee in practice.
+
 ## How it works
 
 ```
