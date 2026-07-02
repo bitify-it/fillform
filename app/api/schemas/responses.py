@@ -131,8 +131,6 @@ class ExtractionMetadata(BaseModel):
         json_schema_extra={
             "examples": [
                 {
-                    "documentPages": 3,
-                    "processedPages": 3,
                     "llmProvider": "ollama",
                     "llmModel": "gemma4:e4b",
                     "strictEvidence": True,
@@ -141,8 +139,6 @@ class ExtractionMetadata(BaseModel):
         },
     )
 
-    document_pages: int | None = Field(default=None, alias="documentPages")
-    processed_pages: int | None = Field(default=None, alias="processedPages")
     llm_provider: str = Field(alias="llmProvider")
     llm_model: str = Field(alias="llmModel")
     strict_evidence: bool = Field(alias="strictEvidence")
@@ -203,8 +199,6 @@ class FormExtractionResponse(BaseModel):
                         },
                     ],
                     "metadata": {
-                        "documentPages": 3,
-                        "processedPages": 3,
                         "llmProvider": "ollama",
                         "llmModel": "gemma4:e4b",
                         "strictEvidence": True,

@@ -125,8 +125,6 @@ class ExtractionService:
             status=status,
             answers=answers,
             metadata=ExtractionMetadata(
-                documentPages=None,
-                processedPages=None,
                 llmProvider=self.extractor.llm_client.provider,
                 llmModel=self.extractor.llm_client.model,
                 strictEvidence=request.options.strict_evidence,
