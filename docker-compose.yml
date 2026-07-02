@@ -1,0 +1,21 @@
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      APP_ENV: development
+      LOG_LEVEL: INFO
+      LLM_PROVIDER: ollama
+      LLM_MODEL: gemma2:9b
+      LLM_ENDPOINT: http://host.docker.internal:11434
+      LLM_JSON_REPAIR_ATTEMPTS: 2
+      LLM_NUM_CTX: 16384
+      DOUBLE_CHECK_MODE: low_confidence
+      DOUBLE_CHECK_CONFIDENCE_THRESHOLD: 0.6
+      STORAGE_DIR: /app/storage
+    volumes:
+      - ./app:/app/app:ro
+      - ./storage:/app/storage
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
